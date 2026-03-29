@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escenza | Premium Clothing Brand</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-black: #1a1a1a;
+            --accent-gold: #c5a059;
+            --light-gray: #f4f4f4;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--white); color: var(--primary-black); line-height: 1.6; overflow-x: hidden; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.8s ease forwards; }
+
+        /* Navigation */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 8%; background: var(--white); position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .logo { font-size: 1.8rem; font-weight: 700; letter-spacing: 5px; color: var(--primary-black); text-decoration: none; }
+        .nav-icons { display: flex; gap: 20px; align-items: center; cursor: pointer; }
+        .cart-count { background: var(--primary-black); color: white; padding: 2px 8px; border-radius: 50%; font-size: 0.8rem; }
+
+        /* Hero Section */
+        .hero {
+            height: 50vh; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;
+        }
+
+        /* Section Titles */
+        .section-title { text-align: center; margin: 60px 0 30px; font-size: 2rem; letter-spacing: 3px; text-transform: uppercase; }
+
+        /* Product Grid */
+        #product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px 8%; margin-bottom: 50px; }
+        .product-card {
+            background: var(--white); border: 1px solid #eee; padding: 15px; transition: 0.3s; text-align: center; cursor: pointer;
+            opacity: 0; 
+        }
+        .product-card:hover { box-shadow: var(--shadow); }
+        .product-card img { width: 100%; height: 350px; object-fit: cover; margin-bottom: 15px; }
+
+        /* Reviews Section */
+        .reviews-section { background: var(--light-gray); padding: 80px 8%; text-align: center; }
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px; }
+        .review-card { background: white; padding: 30px; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; text-align: left; }
+        .stars { color: var(--accent-gold); margin-bottom: 10px; font-size: 1.2rem; }
+        .client-name { font-weight: 700; margin-top: 15px; display: block; font-size: 0.8rem; letter-spacing: 1px; color: var(--accent-gold); }
+
+        /* Feedback Form */
+        .feedback-container { max-width: 600px; margin: 40px auto; padding: 20px; background: white; border-radius: 8px; }
+        .feedback-container input, .feedback-container textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        
+        /* Newsletter Section */
+        .newsletter { background: var(--primary-black); color: white; padding: 80px 8%; text-align: center; }
+        .newsletter h2 { color: var(--white); margin-bottom: 15px; }
+        .newsletter-form { display: flex; justify-content: center; gap: 10px; max-width: 500px; margin: 30px auto 0; }
+        .newsletter-form input { flex: 1; padding: 15px; border: none; outline: none; }
+        .btn-gold { background: var(--accent-gold); color: white; border: none; padding: 0 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-gold:hover { background: #b08d4a; }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 3000;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white; width: 90%; max-width: 800px; display: flex; flex-wrap: wrap;
+            padding: 30px; position: relative; max-height: 90vh; overflow-y: auto;
+        }
+        .close-modal { position: absolute; right: 20px; top: 10px; font-size: 2rem; cursor: pointer; }
+        .modal-left { flex: 1; min-width: 300px; }
+        .modal-right { flex: 1; min-width: 300px; padding: 0 20px; }
+        
+        .option-group { margin: 15px 0; }
+        .option-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.8rem; }
+        .chip-container { display: flex; gap: 10px; }
+        .chip { border: 1px solid #ddd; padding: 5px 15px; cursor: pointer; font-size: 0.8rem; }
+        .chip.selected { background: black; color: white; border-color: black; }
+        
+        .qty-input { width: 60px; padding: 8px; border: 1px solid #ddd; }
+        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { flex: 1; padding: 15px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        .btn-cart { background: #eee; }
+        .btn-buy { background: var(--primary-black); color: white; }
+
+        /* Sidebar Cart */
+        .cart-sidebar {
+            position: fixed; right: -400px; top: 0; width: 380px; height: 100%;
+            background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 4000;
+            transition: 0.4s; padding: 30px; display: flex; flex-direction: column;
+        }
+        .cart-sidebar.active { right: 0; }
+        .close-cart { font-size: 2rem; cursor: pointer; align-self: flex-end; }
+        #cart-items { flex-grow: 1; overflow-y: auto; margin: 20px 0; }
+        .checkout-box { background: var(--light-gray); padding: 20px; }
+        .checkout-box input, .checkout-box select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; }
+
+        footer { background: #000; color: white; padding: 40px 8%; text-align: center; border-top: 1px solid #333; }
+        .social-links a { color: white; margin: 0 15px; text-decoration: none; font-size: 0.9rem; }
+
+        @media (max-width: 600px) { .modal-content { flex-direction: column; } .cart-sidebar { width: 100%; } .newsletter-form { flex-direction: column; } .btn-gold { padding: 15px; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">ESCENZA</a>
+        <div class="nav-icons" onclick="toggleCart()">
+            <span>BAG</span>
+            <span class="cart-count" id="cart-count">0</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>ESCENZA</h1>
+        <p>WHERE STYLE MEETS ESSENCE</p>
+    </section>
+
+    <h2 class="section-title">NEW ARRIVALS</h2>
+    <main id="product-grid"></main>
+
+    <section class="reviews-section">
+        <h2 class="section-title">TRUSTED REVIEWS</h2>
+        <div class="reviews-grid" id="reviews-container">
+            <div class="review-card animate-in">
+                <div class="stars">★★★★★</div>
+                <p>"The Premium White Kurta exceeded my expectations. The fabric is breathable and the fit is perfect."</p>
+                <span class="client-name">AHMED RAZA</span>
+            </div>
+            <div class="review-card animate-in" style="animation-delay: 0.2s">
+                <div class="stars">★★★★★</div>
+                <p>"Ordered a Casual Linen Shirt. Great quality and professional packaging."</p>
+                <span class="client-name">SARA KHAN</span>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 60px;">SHARE YOUR EXPERIENCE</h3>
+        <div class="feedback-container">
+            <input type="text" id="rev-name" placeholder="Your Name">
+            <textarea id="rev-text" rows="4" placeholder="How was your experience with Escenza?"></textarea>
+            <button class="btn btn-buy" style="width:100%" onclick="addReview()">SUBMIT REVIEW</button>
+        </div>
+    </section>
+
+    <section class="newsletter">
+        <h2>JOIN THE INNER CIRCLE</h2>
+        <p>Subscribe to receive updates on new collections and exclusive offers.</p>
+        <div class="newsletter-form">
+            <input type="email" id="news-email" placeholder="Enter your email address">
+            <button class="btn-gold" onclick="subscribe()">SUBSCRIBE</button>
+        </div>
+    </section>
+
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">×</span>
+            <div class="modal-left">
+                <img id="modal-img" src="" style="width:100%; height:auto;">
+            </div>
+            <div class="modal-right">
+                <h2 id="modal-title"></h2>
+                <p id="modal-price" style="color:var(--accent-gold); font-weight:bold; font-size: 1.2rem;"></p>
+                <p id="modal-desc" style="font-size:0.85rem; margin:15px 0; color:#666;"></p>
+                
+                <div class="option-group">
+                    <label>SIZE</label>
+                    <div class="chip-container" id="size-chips"></div>
+                </div>
+                
+                <div class="option-group">
+                    <label>COLOR</label>
+                    <div class="chip-container" id="color-chips"></div>
+                </div>
+
+                <div class="option-group">
+                    <label>QUANTITY</label>
+                    <input type="number" id="modal-qty" class="qty-input" value="1" min="1">
+                </div>
+
+                <div class="modal-btns">
+                    <button class="btn btn-cart" onclick="addToCart()">ADD TO BAG</button>
+                    <button class="btn btn-buy" onclick="buyNow()">BUY NOW</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-sidebar" id="cart-sidebar">
+        <span class="close-cart" onclick="toggleCart()">×</span>
+        <h2>YOUR BAG</h2>
+        <div id="cart-items"></div>
+        <div class="checkout-box">
+            <p>Subtotal: <span id="subtotal">0</span> PKR</p>
+            <p>Shipping: <span id="shipping-fee">250</span> PKR</p>
+            <p id="free-shipping-note" style="color:green; font-size: 0.8rem; display:none;">Free Delivery Applied!</p>
+            <hr><br>
+            <p><strong>Total: <span id="total-price">0</span> PKR</strong></p>
+            <br>
+            <input type="text" id="cust-name" placeholder="Full Name">
+            <input type="text" id="cust-address" placeholder="Complete Delivery Address">
+            <select id="payment-choice">
+                <option value="Cash on Delivery">Cash on Delivery</option>
+                <option value="JazzCash (03172846872)">JazzCash (03172846872)</option>
+                <option value="EasyPaisa (03172846872)">EasyPaisa (03172846872)</option>
+            </select>
+            <button class="btn btn-buy" style="width:100%" onclick="sendOrder()">Confirm via WhatsApp</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="social-links">
+            <a href="#">INSTAGRAM</a> <a href="#">FACEBOOK</a> <a href="#">TWITTER</a>
+        </div>
+        <p style="margin-top:20px;">&copy; 2026 ESCENZA CLOTHING | 03172846872</p>
+    </footer>
+
+    <script>
+        const products = [
+            { id: 1, name: "Premium White Kurta", price: 4500, desc: "Superior quality cotton for a sharp look.", sizes: ['S','M','L','XL'], colors: ['White','Cream'], img: "https://images.unsplash.com/photo-1597983073493-88cd35cf93b0?auto=format&fit=crop&w=500&q=60" },
+            { id: 3, name: "Casual Linen Shirt", price: 3200, desc: "Breathable linen fabric perfect for summer.", sizes: ['S','M','L'], colors: ['Sky Blue','White','Pink'], img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=500&q=60" },
+            { id: 4, name: "Slim Fit Cotton Chinos", price: 3800, desc: "Stretchable cotton chinos for all-day comfort.", sizes: ['30','32','34','36'], colors: ['Khaki','Black','Navy'], img: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=500&q=60" }
+        ];
+
+        let cart = [];
+        let currentProduct = null;
+
+        // Render Products
+        const grid = document.getElementById('product-grid');
+        products.forEach((p, i) => {
+            const card = document.createElement('div');
+            card.className = 'product-card animate-in';
+            card.style.animationDelay = `${i * 0.1}s`;
+            card.onclick = () => openModal(p.id);
+            card.innerHTML = `<img src="${p.img}"><h3>${p.name}</h3><span>${p.price} PKR</span>`;
+            grid.appendChild(card);
+        });
+
+        // Review Functionality
+        function addReview() {
+            const name = document.getElementById('rev-name').value;
+            const text = document.getElementById('rev-text').value;
+            if(!name || !text) return alert("Please fill in both fields.");
+
+            const container = document.getElementById('reviews-container');
+            const newReview = document.createElement('div');
+            newReview.className = 'review-card animate-in';
+            newReview.innerHTML = `<div class="stars">★★★★★</div><p>"${text}"</p><span class="client-name">${name.toUpperCase()}</span>`;
+            container.prepend(newReview);
+            
+            document.getElementById('rev-name').value = '';
+            document.getElementById('rev-text').value = '';
+            alert("Thank you for your feedback!");
+        }
+
+        // Newsletter Functionality
+        function subscribe() {
+            const email = document.getElementById('news-email').value;
+            if(!email.includes('@')) return alert("Please enter a valid email.");
+            alert("Welcome to Escenza! Check your inbox soon.");
+            document.getElementById('news-email').value = '';
+        }
+
+        // Cart and Modal Logic
+        function openModal(id) {
+            currentProduct = products.find(p => p.id === id);
+            document.getElementById('modal-img').src = currentProduct.img;
+            document.getElementById('modal-title').innerText = currentProduct.name;
+            document.getElementById('modal-price').innerText = currentProduct.price + " PKR";
+            document.getElementById('modal-desc').innerText = currentProduct.desc;
+            renderChips('size-chips', currentProduct.sizes);
+            renderChips('color-chips', currentProduct.colors);
+            document.getElementById('product-modal').classList.add('active');
+        }
+
+        function renderChips(containerId, list) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = list.map((item, i) => `<div class="chip ${i===0?'selected':''}" onclick="selectChip(this)">${item}</div>`).join('');
+        }
+
+        function selectChip(el) {
+            el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function closeModal() { document.getElementById('product-modal').classList.remove('active'); }
+        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('active'); }
+
+        function addToCart() {
+            const size = document.querySelector('#size-chips .selected').innerText;
+            const color = document.querySelector('#color-chips .selected').innerText;
+            const qty = parseInt(document.getElementById('modal-qty').value);
+            cart.push({ ...currentProduct, selectedSize: size, selectedColor: color, qty: qty });
+            updateCartDisplay();
+            closeModal();
+            toggleCart();
+        }
+
+        function buyNow() { addToCart(); }
+
+        function updateCartDisplay() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            let subtotal = 0;
+            cart.forEach((item, index) => {
+                subtotal += (item.price * item.qty);
+                container.innerHTML += `<div class="cart-item"><div><p><strong>${item.name}</strong></p><p style="font-size:0.7rem">${item.selectedColor} | Size: ${item.selectedSize} | Qty: ${item.qty}</p><p>${item.price * item.qty} PKR</p></div><span style="cursor:pointer; color:red" onclick="removeItem(${index})">Remove</span></div>`;
+            });
+            let shipping = (subtotal > 5000 || subtotal === 0) ? 0 : 250;
+            document.getElementById('free-shipping-note').style.display = subtotal > 5000 ? 'block' : 'none';
+            document.getElementById('subtotal').innerText = subtotal;
+            document.getElementById('shipping-fee').innerText = shipping;
+            document.getElementById('total-price').innerText = subtotal + shipping;
+            document.getElementById('cart-count').innerText = cart.length;
+        }
+
+        function removeItem(i) { cart.splice(i, 1); updateCartDisplay(); }
+
+        function sendOrder() {
+            const name = document.getElementById('cust-name').value;
+            const addr = document.getElementById('cust-address').value;
+            const pay = document.getElementById('payment-choice').value;
+            if(!name || !addr || cart.length === 0) return alert("Fill details and add items to bag!");
+            let details = cart.map(i => `${i.name} (${i.qty}x ${i.selectedSize}-${i.selectedColor})`).join(", ");
+            let msg = `*ESCENZA ORDER*%0A*Customer:* ${name}%0A*Address:* ${addr}%0A*Items:* ${details}%0A*Total:* ${document.getElementById('total-price').innerText} PKR%0A*Payment:* ${pay}`;
+            window.open(`https://wa.me/923172846872?text=${msg}`);
+        }
+    </script>
+</body>
+</html>
